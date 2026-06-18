@@ -278,7 +278,13 @@
             contact_messages: [
                 { id: 'cm1', full_name: 'Veli Bey', email: 'veli@demo.com', message: 'Hocam ders programı çok verimli oldu, teşekkür ederiz.', created_at: new Date().toISOString() }
             ],
-            dynamic_content: []
+            dynamic_content: [],
+            announcements: [
+                { id: 'an1', teacher_id: 't1', title: 'Hoş Geldiniz!', message: 'MATOTA interaktif demomuza hoş geldiniz. Sistemin tüm özelliklerini bu panel üzerinden deneyimleyebilirsiniz.', created_at: new Date().toISOString(), is_global: false }
+            ],
+            questions: [
+                { id: 'q1', student_id: 's1', teacher_id: 't1', text_content: 'Hocam, üslü sayılarla ilgili paylaştığınız son ödevdeki 5. soruyu çözemedim. Yardımcı olabilir misiniz?', status: 'active', created_at: new Date().toISOString(), question_answers: [] }
+            ]
         };
 
         // SAĞ TIK KORUMASI
@@ -339,7 +345,6 @@
         function updateViewModeIcon() { const icon = document.getElementById('view-mode-icon'); if (icon) { icon.className = currentViewMode === 'grid' ? 'fa-solid fa-list' : 'fa-solid fa-table-cells-large'; } }
         window.applyFilters = function(cId, sId, stId, dId) { const container = document.getElementById(cId); if (!container) return; const search = document.getElementById(sId)?.value.toLowerCase() || ''; const student = document.getElementById(stId)?.value || ''; const date = document.getElementById(dId)?.value || ''; const items = container.querySelectorAll('.filterable-item'); items.forEach(item => { const textStr = (item.dataset.search || '').toLowerCase(); const stuId = item.dataset.student || ''; const itemDate = item.dataset.date || ''; let match = true; if (search && !textStr.includes(search)) match = false; if (student && stuId !== student && stuId !== 'null') match = false; if (date && !itemDate.startsWith(date)) match = false; item.style.display = match ? '' : 'none'; }); }
         function updateTheme(role) { const body = document.getElementById('main-body'); if (body) { body.classList.remove('theme-blue', 'theme-orange'); body.classList.add(role === 'teacher' ? 'theme-orange' : 'theme-blue'); } }
-        function toggleDarkMode() { document.documentElement.classList.toggle('dark'); localStorage.theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light'; }
         function hideLoading() { const l = document.getElementById('loading'); if(l) { l.classList.add('opacity-0'); setTimeout(() => l.classList.add('hidden'), 500); } }
         function showAuthScreen(role) { window.demoLogin(role); }
         function logout() { location.reload(); }
@@ -362,7 +367,6 @@
         }
 
         window.onload = () => {
-            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) { document.documentElement.classList.add('dark'); } 
             updateViewModeIcon();
             hideLoading();
             document.getElementById('landing-page').classList.remove('hidden');
@@ -371,8 +375,8 @@
         // NAVIGATION
         function renderSidebar() {
             const nav = document.getElementById('sidebar-nav');
-            const teacherViews = [ { id: 'dashboard', name: 'Dashboard', icon: 'fa-chart-line' }, { id: 't-students', name: 'Öğrenci Kayıt', icon: 'fa-user-plus' }, { id: 't-lessons', name: 'Ders Planla', icon: 'fa-calendar-day' }, { id: 't-exams', name: 'Dış Sınav Planla', icon: 'fa-file-signature' }, { id: 't-homeworks', name: 'Ödev Yönetimi', icon: 'fa-book' }, { id: 't-files', name: 'Dosya Paylaşımı', icon: 'fa-folder-open' }, { id: 't-videos', name: 'Video Yönetimi', icon: 'fa-video' }, { id: 't-points', name: 'Puan Sistemi', icon: 'fa-star' }, { id: 't-analytics', name: 'Analiz Motoru', icon: 'fa-chart-pie' }, { id: 't-progress', name: 'Gelişim Raporu', icon: 'fa-chart-area' }, { id: 't-messages', name: 'Mesajlar', icon: 'fa-envelope-open-text' }, { id: 't-settings', name: 'Sistem Kodları', icon: 'fa-code' } ];
-            const studentViews = [ { id: 'dashboard', name: 'Panelim', icon: 'fa-house' }, { id: 's-lessons', name: 'Derslerim', icon: 'fa-video' }, { id: 's-exams', name: 'Sınavlarım', icon: 'fa-file-signature' }, { id: 's-homeworks', name: 'Ödevlerim', icon: 'fa-pencil-ruler' }, { id: 's-files', name: 'Ders Dosyaları', icon: 'fa-folder-open' }, { id: 's-videos', name: 'Kısa Videolar', icon: 'fa-play' }, { id: 's-points', name: 'Puanlarım', icon: 'fa-trophy' }, { id: 's-analytics', name: 'Analizlerim', icon: 'fa-chart-pie' } ];
+            const teacherViews = [ { id: 'dashboard', name: 'Yönetim Özeti', icon: 'fa-chart-line' }, { id: 't-announcements', name: 'Duyurular', icon: 'fa-bullhorn' }, { id: 't-sordur', name: 'Sordur (Soru&Cevap)', icon: 'fa-clipboard-question' }, { id: 't-students', name: 'Öğrenci Kayıt', icon: 'fa-user-plus' }, { id: 't-lessons', name: 'Ders Planla', icon: 'fa-calendar-day' }, { id: 't-exams', name: 'Dış Sınav Planla', icon: 'fa-file-signature' }, { id: 't-homeworks', name: 'Ödev Yönetimi', icon: 'fa-book' }, { id: 't-files', name: 'Dosya Paylaşımı', icon: 'fa-folder-open' }, { id: 't-videos', name: 'Video Yönetimi', icon: 'fa-video' }, { id: 't-points', name: 'Puan Sistemi', icon: 'fa-star' }, { id: 't-analytics', name: 'Analiz Motoru', icon: 'fa-chart-pie' }, { id: 't-progress', name: 'Gelişim Raporu', icon: 'fa-chart-area' }, { id: 't-messages', name: 'Mesajlar', icon: 'fa-envelope-open-text' }, { id: 't-settings', name: 'Sistem Kodları', icon: 'fa-code' } ];
+            const studentViews = [ { id: 'dashboard', name: 'Panelim', icon: 'fa-house' }, { id: 's-announcements', name: 'Duyurular', icon: 'fa-bullhorn' }, { id: 's-lessons', name: 'Derslerim', icon: 'fa-video' }, { id: 's-exams', name: 'Sınavlarım', icon: 'fa-file-signature' }, { id: 's-homeworks', name: 'Ödevlerim', icon: 'fa-pencil-ruler' }, { id: 's-sordur', name: 'Sordur (Soru Sor)', icon: 'fa-clipboard-question' }, { id: 's-files', name: 'Ders Dosyaları', icon: 'fa-folder-open' }, { id: 's-videos', name: 'Kısa Videolar', icon: 'fa-play' }, { id: 's-points', name: 'Puanlarım', icon: 'fa-trophy' }, { id: 's-analytics', name: 'Analizlerim', icon: 'fa-chart-pie' } ];
             const menu = userProfile.role === 'teacher' ? teacherViews : studentViews;
             nav.innerHTML = (menu || []).map(item => `<button type="button" onclick="navigate('${item.id}')" id="nav-${item.id}" class="sidebar-link w-full flex items-center space-x-4 px-6 py-4 rounded-2xl font-bold text-xs uppercase tracking-widest transition hover:bg-white/30 dark:hover:bg-white/10"><i class="fa-solid ${item.icon} text-lg"></i><span>${item.name}</span></button>`).join('');
         }
@@ -388,6 +392,8 @@
 
             setTimeout(async () => {
                 if(viewId === 'dashboard') await renderDashboard();
+                else if(viewId === 't-announcements') await window.renderTeacherAnnouncements();
+                else if(viewId === 't-sordur') await window.renderTeacherSordur();
                 else if(viewId === 't-students') await window.renderTeacherStudents();
                 else if(viewId === 't-lessons') await window.renderTeacherLessons();
                 else if(viewId === 't-homeworks') await window.renderTeacherHomeworks();
@@ -399,6 +405,8 @@
                 else if(viewId === 't-progress') await window.renderTeacherProgress();
                 else if(viewId === 't-messages') await window.renderTeacherMessages();
                 else if(viewId === 't-settings') await window.renderTeacherSettings();
+                else if(viewId === 's-announcements') await window.renderStudentAnnouncements();
+                else if(viewId === 's-sordur') await window.renderStudentSordur();
                 else if(viewId === 's-lessons') await window.renderStudentLessons();
                 else if(viewId === 's-homeworks') await window.renderStudentHomeworks();
                 else if(viewId === 's-exams') await window.renderStudentExams();
@@ -435,6 +443,27 @@
         // ==========================================
         // ÖĞRENCİ MODÜLLERİ (DEMO DATA)
         // ==========================================
+        window.renderStudentAnnouncements = async function() {
+            document.getElementById('page-title').innerText = 'Duyurular Panosu';
+            let anns = DB.announcements.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+            let html = anns.map(a => `<div class="liquid-card p-8 rounded-[2.5rem] mb-4 border border-white/20 transition hover:shadow-lg"><div class="flex items-center gap-3 mb-4"><div class="w-12 h-12 bg-blue-500/10 text-blue-500 rounded-xl flex items-center justify-center text-xl shadow-inner border border-blue-500/20"><i class="fa-solid fa-bullhorn"></i></div><div><h4 class="font-black text-xl text-slate-800 dark:text-white drop-shadow-sm">${a.title}</h4><p class="text-[10px] font-bold text-slate-500 mt-1"><i class="fa-regular fa-clock mr-1"></i>${new Date(a.created_at).toLocaleString('tr-TR')}</p></div></div><p class="text-sm font-medium text-slate-700 dark:text-slate-300 leading-relaxed">${a.message}</p></div>`).join('') || '<div class="text-center p-10 text-slate-500 font-bold italic text-sm liquid-card rounded-[3rem]">Henüz bir duyuru bulunmuyor.</div>';
+            document.getElementById('view-content').innerHTML = `<div class="max-w-4xl mx-auto view-fade">${html}</div>`;
+        };
+
+        window.renderStudentSordur = async function() {
+            document.getElementById('page-title').innerText = 'Soru Sor (Sordur)';
+            let qs = DB.questions.filter(q => q.student_id === userProfile.id).sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+            let html = qs.map(q => `<div class="liquid-card p-8 rounded-[2.5rem] mb-6 border border-white/20 transition hover:shadow-lg"><div class="flex justify-between items-center mb-4"><span class="text-[10px] text-slate-500 font-bold"><i class="fa-regular fa-clock mr-1"></i>${new Date(q.created_at).toLocaleString('tr-TR')}</span><span class="${q.status === 'active' ? 'text-orange-500 bg-orange-500/10 border-orange-500/20' : 'text-green-500 bg-green-500/10 border-green-500/20'} font-black text-[9px] uppercase px-3 py-1.5 rounded-lg border shadow-sm">${q.status === 'active' ? 'Bekliyor' : 'Cevaplandı'}</span></div><p class="text-sm font-bold text-slate-800 dark:text-white mb-4 whitespace-pre-line">${q.text_content}</p>${q.status === 'resolved' ? `<div class="bg-blue-50 dark:bg-blue-900/20 p-5 rounded-2xl shadow-inner border border-blue-500/10"><p class="text-[10px] text-blue-600 font-black uppercase tracking-widest mb-2"><i class="fa-solid fa-reply mr-1"></i>Eğitmenin Cevabı</p><p class="text-sm text-slate-700 dark:text-slate-300 font-medium">${q.question_answers[0]?.text_content || ''}</p></div>` : ''}</div>`).join('') || '<div class="text-center p-10 text-slate-500 font-bold italic text-sm liquid-card rounded-[3rem]">Gönderdiğiniz soru bulunmuyor.</div>';
+            document.getElementById('view-content').innerHTML = `<div class="grid lg:grid-cols-3 gap-10 view-fade"><div class="lg:col-span-1"><form id="ask-form" class="liquid-card p-8 rounded-[3rem] shadow-xl space-y-4 sticky top-6 border border-white/20"><h4 class="font-black text-lg mb-4 text-slate-800 dark:text-white drop-shadow-sm italic uppercase tracking-tighter"><i class="fa-solid fa-clipboard-question text-blue-500 mr-2"></i>Yeni Soru Sor</h4><textarea id="q-text" placeholder="Sorunuzu detaylı bir şekilde yazın..." required class="w-full p-4 rounded-2xl liquid-card-inner outline-none font-medium h-32 custom-scrollbar focus:ring-2 focus:ring-blue-500 transition text-slate-800 dark:text-white"></textarea><button type="submit" class="w-full bg-blue-600 text-white py-4 rounded-xl font-black uppercase shadow-lg hover:brightness-110 transition border border-white/20">Soruyu Gönder</button></form></div><div class="lg:col-span-2 space-y-4"><h3 class="font-black text-slate-500 uppercase tracking-widest text-[10px] mb-4 border-b border-white/10 pb-2">Geçmiş Sorularınız</h3>${html}</div></div>`;
+            
+            document.getElementById('ask-form').onsubmit = e => { 
+                e.preventDefault(); 
+                DB.questions.push({ id: 'q'+Date.now(), student_id: userProfile.id, teacher_id: 't1', text_content: document.getElementById('q-text').value, status: 'active', created_at: new Date().toISOString(), question_answers: [] }); 
+                alert('Sorunuz eğitmene iletildi!'); 
+                window.renderStudentSordur(); 
+            };
+        };
+
         window.renderStudentLessons = async function() { 
             document.getElementById('page-title').innerText = 'Derslerim'; 
             let l = DB.lessons.filter(ls => ls.student_id === userProfile.id).sort((a,b) => new Date(a.scheduled_at) - new Date(b.scheduled_at)); 
@@ -574,6 +603,28 @@
         // ==========================================
         // TEACHER MODULES (DEMO DATA)
         // ==========================================
+        window.renderTeacherAnnouncements = async function() {
+            document.getElementById('page-title').innerText = 'Duyuru Yönetimi';
+            let anns = DB.announcements.filter(a => a.teacher_id === userProfile.id).sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+            let html = anns.map(a => `<div class="liquid-card p-6 rounded-[2.5rem] mb-4 border border-white/20 transition hover:shadow-md"><div class="flex justify-between items-start mb-4"><div class="flex items-center gap-3"><div class="w-10 h-10 bg-orange-500/10 text-orange-500 rounded-xl flex items-center justify-center text-lg border border-orange-500/20"><i class="fa-solid fa-bullhorn"></i></div><div><h4 class="font-black text-lg text-slate-800 dark:text-white drop-shadow-sm">${a.title}</h4><p class="text-[10px] font-bold text-slate-500 mt-1"><i class="fa-regular fa-clock mr-1"></i>${new Date(a.created_at).toLocaleString('tr-TR')}</p></div></div><button onclick="window.deleteItem('announcements', '${a.id}', window.renderTeacherAnnouncements)" class="w-10 h-10 bg-red-500/10 text-red-500 rounded-xl flex items-center justify-center transition hover:scale-110 shadow-sm border border-red-500/20"><i class="fa-solid fa-trash"></i></button></div><p class="text-sm font-medium text-slate-700 dark:text-slate-300 bg-white/30 dark:bg-black/20 p-4 rounded-2xl shadow-inner border border-white/10">${a.message}</p></div>`).join('') || '<div class="text-center p-10 text-slate-500 font-bold italic text-sm liquid-card rounded-[3rem] border border-white/10">Sistemde yayınladığınız duyuru bulunmuyor.</div>';
+            document.getElementById('view-content').innerHTML = `<div class="grid lg:grid-cols-3 gap-10 view-fade"><div class="lg:col-span-1"><form id="ann-form" class="liquid-card p-8 rounded-[3rem] shadow-xl space-y-4 sticky top-6 border border-white/20"><h4 class="font-black text-lg mb-4 text-slate-800 dark:text-white italic uppercase tracking-tighter drop-shadow-sm"><i class="fa-solid fa-paper-plane text-orange-500 mr-2"></i>Yeni Duyuru</h4><input type="text" id="a-title" placeholder="Duyuru Başlığı" required class="w-full p-4 rounded-xl liquid-card-inner outline-none font-bold focus:ring-2 focus:ring-orange-500 transition text-slate-800 dark:text-white"><textarea id="a-msg" placeholder="Duyuru içeriği..." required class="w-full p-4 rounded-xl liquid-card-inner outline-none font-medium h-32 custom-scrollbar focus:ring-2 focus:ring-orange-500 transition text-slate-800 dark:text-white"></textarea><button type="submit" class="w-full bg-orange-600 border border-white/20 text-white py-4 rounded-xl font-black uppercase shadow-lg hover:brightness-110 transition mt-2 hover:scale-[1.02]">Öğrencilere Yayınla</button></form></div><div class="lg:col-span-2 space-y-4"><h3 class="font-black text-slate-500 uppercase tracking-widest text-[10px] mb-4 border-b border-white/10 pb-2">Geçmiş Duyurularınız</h3>${html}</div></div>`;
+            document.getElementById('ann-form').onsubmit = e => { e.preventDefault(); DB.announcements.push({ id: 'an'+Date.now(), teacher_id: userProfile.id, title: document.getElementById('a-title').value, message: document.getElementById('a-msg').value, created_at: new Date().toISOString(), is_global: false }); alert('Duyurunuz öğrencilere başarıyla yayınlandı!'); window.renderTeacherAnnouncements(); };
+        };
+
+        window.renderTeacherSordur = async function() {
+            document.getElementById('page-title').innerText = 'Sordur (Öğrenci Soruları)';
+            let qs = DB.questions.map(q => ({...q, profiles: DB.profiles.find(p=>p.id===q.student_id)})).sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+            let html = qs.map(q => `<div class="liquid-card p-6 md:p-8 rounded-[2.5rem] mb-6 border border-white/20 transition hover:shadow-lg"><div class="flex justify-between items-center mb-4"><div><h4 class="font-black text-lg text-slate-800 dark:text-white drop-shadow-sm uppercase">${q.profiles?.full_name || 'Öğrenci'}</h4><p class="text-[10px] font-bold text-slate-500 mt-1"><i class="fa-regular fa-clock mr-1"></i>${new Date(q.created_at).toLocaleString('tr-TR')}</p></div><span class="${q.status === 'active' ? 'text-orange-500 bg-orange-500/10 border-orange-500/20' : 'text-green-500 bg-green-500/10 border-green-500/20'} font-black text-[10px] uppercase px-3 py-1.5 rounded-lg border shadow-sm">${q.status === 'active' ? 'Cevap Bekliyor' : 'Çözüldü'}</span></div><div class="bg-white/40 dark:bg-black/20 p-4 rounded-2xl mb-4 border border-white/10 shadow-inner"><p class="text-sm font-bold text-slate-800 dark:text-white whitespace-pre-line">${q.text_content}</p></div>${q.status === 'active' ? `<form onsubmit="window.answerQuestion(event, '${q.id}')" class="flex flex-col gap-2 mt-4 pt-4 border-t border-white/10"><textarea id="ans-${q.id}" placeholder="Öğrenciye cevabınızı yazın..." required class="w-full p-4 rounded-xl liquid-card-inner outline-none text-sm font-medium focus:ring-2 focus:ring-blue-500 transition text-slate-800 dark:text-white resize-none h-20 custom-scrollbar"></textarea><button type="submit" class="bg-blue-600 text-white py-3 rounded-xl font-black uppercase text-xs shadow-md transition hover:brightness-110 border border-white/20 w-full sm:w-auto self-end px-8"><i class="fa-solid fa-reply mr-1"></i> Cevabı Gönder</button></form>` : `<div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-xl mt-4 border border-blue-500/20 shadow-inner"><p class="text-[10px] text-blue-600 font-black uppercase tracking-widest mb-2"><i class="fa-solid fa-check-double mr-1"></i>Sizin Cevabınız:</p><p class="text-sm text-slate-700 dark:text-slate-300 font-medium">${q.question_answers[0]?.text_content || ''}</p></div>`}</div>`).join('') || '<div class="text-center p-10 text-slate-500 font-bold italic text-sm liquid-card rounded-[3rem] border border-white/10">Sistemde yanıt bekleyen veya geçmiş soru bulunmuyor.</div>';
+            document.getElementById('view-content').innerHTML = `<div class="max-w-4xl mx-auto view-fade">${html}</div>`;
+        };
+
+        window.answerQuestion = function(e, qId) { 
+            e.preventDefault(); 
+            const ans = document.getElementById('ans-'+qId).value; 
+            const q = DB.questions.find(x => x.id === qId); 
+            if(q) { q.status = 'resolved'; q.question_answers.push({ text_content: ans }); alert('Öğrenciye cevap gönderildi!'); window.renderTeacherSordur(); } 
+        };
+
         window.renderTeacherLessons = async function() { 
             document.getElementById('page-title').innerText = 'Ders Planlama';
             let s = DB.profiles.filter(p => p.role === 'student');
