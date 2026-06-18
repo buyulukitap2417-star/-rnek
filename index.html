@@ -258,7 +258,7 @@
             ],
             course_files: [
                 { id: 'f1', teacher_id: 't1', student_id: null, title: 'Mayıs Ayı Genel Çalışma Programı', file_url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf', created_at: new Date().toISOString() },
-                { id: 'f2', teacher_id: 't1', student_id: 's1', title: 'Ahmet Yılmaz Özel Analiz Raporu', file_url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf', created_at: new Date().toISOString() }
+                    { id: 'f2', teacher_id: 't1', student_id: 's1', title: 'Deniz Kaya Özel Analiz Raporu', file_url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf', created_at: new Date().toISOString() }
             ],
             videos: [
                 { id: 'v1', teacher_id: 't1', title: 'Üslü Sayılar Yeni Nesil Soru Çözümü - Taktikler', video_url: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4', created_at: new Date().toISOString() },
@@ -345,6 +345,7 @@
         function updateViewModeIcon() { const icon = document.getElementById('view-mode-icon'); if (icon) { icon.className = currentViewMode === 'grid' ? 'fa-solid fa-list' : 'fa-solid fa-table-cells-large'; } }
         window.applyFilters = function(cId, sId, stId, dId) { const container = document.getElementById(cId); if (!container) return; const search = document.getElementById(sId)?.value.toLowerCase() || ''; const student = document.getElementById(stId)?.value || ''; const date = document.getElementById(dId)?.value || ''; const items = container.querySelectorAll('.filterable-item'); items.forEach(item => { const textStr = (item.dataset.search || '').toLowerCase(); const stuId = item.dataset.student || ''; const itemDate = item.dataset.date || ''; let match = true; if (search && !textStr.includes(search)) match = false; if (student && stuId !== student && stuId !== 'null') match = false; if (date && !itemDate.startsWith(date)) match = false; item.style.display = match ? '' : 'none'; }); }
         function updateTheme(role) { const body = document.getElementById('main-body'); if (body) { body.classList.remove('theme-blue', 'theme-orange'); body.classList.add(role === 'teacher' ? 'theme-orange' : 'theme-blue'); } }
+            function toggleDarkMode() { document.documentElement.classList.toggle('dark'); localStorage.theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light'; }
         function hideLoading() { const l = document.getElementById('loading'); if(l) { l.classList.add('opacity-0'); setTimeout(() => l.classList.add('hidden'), 500); } }
         function showAuthScreen(role) { window.demoLogin(role); }
         function logout() { location.reload(); }
